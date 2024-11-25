@@ -48,6 +48,14 @@
       ansible.builtin.pip:
         name: docker
     
+    - name: "Create Page`s directory"
+      ansible.builtin.file:
+        state: directory
+        path: ~/pages/firts_page
+        owner: www-data
+        group: www-data
+        mode: 0755
+    
     - name: "Pull nginx image"
       community.docker.docker_image:
         name: nginx:stable-alpine3.20
@@ -59,7 +67,17 @@
         name: nginx_con
         image: nginx:stable-alpine3.20
         state: started
+        volumes:
+          - ~/pages/firts_page:/usr/share/nginx/html/
         ports:
           - 80:80
         restart: true
         restart_policy: "always"
+
+    - name: "Copy Html Page To The Server"
+      ansible.builtin.copy:
+        src: /home/ubuntu/bash-practise/megalapot/ansible_files/page/index.html
+        dest: ~/pages/firts_page/index.html
+        mode: 0755
+        owner: www-data
+        group: www-data
